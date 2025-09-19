@@ -1,5 +1,5 @@
 /**
- * @copyright (C) 2017 Melexis N.V.
+ * @copyright (C) 2025 Melexis N.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,10 +15,10 @@
  *
  */
 
-#include <MLX90642_depends.h>
-
 #ifndef _MLX90642_H_
 #define _MLX90642_H_
+
+#include "MLX90642_depends.h"
 
 #define MLX90642_NACK_ERR 1
 #define MLX90642_INVAL_VAL_ERR 2
@@ -103,9 +103,47 @@
 #define MLX90642_ADRESSED_RESET_CMD 0x0006
 #define MLX90642_START_SYNC_MEAS_CMD 0x0001
 #define MLX90642_SLEEP_CMD 0x0007
+#define MLX90642_WAKE_CMD 0x57
 
 #define MLX90642_MS_BYTE(reg)   (reg >> 8)
 #define MLX90642_LS_BYTE(reg)   (reg & 0x00FF)
+
+#define MLX90642_I2C_CONFIG_BYTES_NUM 6
+#define MLX90642_I2C_CMD_BYTES_NUM 4
+#define MLX90642_I2C_WAKEUP_BYTES_NUM 1
+
+/** MLX90642 configuration I2C command
+ * @note For more information refer to the MLX90642 datasheet
+ *
+ * @param[in] slaveAddr I2C slave address of the device
+ * @param[in] writeAddress Configuration address to write to
+ * @param[in] wData Data to write
+ *
+ * @retval  <0 Error while configuring the MLX90642 device
+ *
+ */
+int MLX90642_Config(uint8_t slaveAddr, uint16_t writeAddress, uint16_t wData);
+
+/** MLX90642 I2C commands send
+ * @note The addressed reset, start/sync measurement and sleep commands share the same I2C format. For more information refer to the MLX90642 datasheet
+ *
+ * @param[in] slaveAddr I2C slave address of the device
+ * @param[in] i2c_cmd MLX90642 I2C command to send
+ *
+ * @retval  <0 Error while sending the I2C command to the MLX90642 device
+ *
+ */
+int MLX90642_I2CCmd(uint8_t slaveAddr, uint16_t i2c_cmd);
+
+/** MLX90642 wake-up command
+ * @note For more information refer to the MLX90642 datasheet
+ *
+ * @param[in] slaveAddr I2C slave address of the device
+ *
+ * @retval  <0 Error while sending the wake-up command to the MLX90642 device
+ *
+ */
+int MLX90642_WakeUp(uint8_t slaveAddr);
 
 /** Get the ID of the MLX90642 device
  *
@@ -117,16 +155,18 @@
  */
 int MLX90642_GetID(uint8_t slaveAddr, uint16_t *mlxid);
 
-/** Get the firmware version of the MLX90642 device
+/** Get the firmware semantic version of the MLX90642 device
  * @note Different version of the FW may support different features
  *
  * @param[in] slaveAddr I2C slave address of the device
- * @param[out] fwver Pointer to where the firmware versioin is stored
+ * @param[out] major Pointer to where the Major is stored
+ * @param[out] minor Pointer to where the Minor is stored
+ * @param[out] patch Pointer to where the Patch is stored
  *
  * @retval <0 Error while reading the firmware version
  *
  */
-int MLX90642_GetFWver(uint8_t slaveAddr, uint8_t *fwver);
+int MLX90642_GetFWver(uint8_t slaveAddr, uint8_t *major, uint8_t *minor, uint8_t *patch);
 
 /** Get the measurement mode of the MLX90642 device
  *
@@ -410,7 +450,7 @@ int MLX90642_StartSync(uint8_t slaveAddr);
  * @retval <0 Error while runnning the new measurement
  *
  */
-int MLX90642_MeasureNow(uint8_t slaveAddr, uint16_t *pixVal);
+int MLX90642_MeasureNow(uint8_t slaveAddr, int16_t *pixVal);
 
 /** Get the calculated image from the MLX90642 device
  * @note The image will contain temperature data or normalized data depending on the output format set
@@ -422,7 +462,7 @@ int MLX90642_MeasureNow(uint8_t slaveAddr, uint16_t *pixVal);
  * @retval <0 Error while getting the image
  *
  */
-int MLX90642_GetImage(uint8_t slaveAddr, uint16_t *pixVal);
+int MLX90642_GetImage(uint8_t slaveAddr, int16_t *pixVal);
 
 /** Get the full frame data - raw IR data, aux data and calculated image from the MLX90642 device
  * @note The image will contain temperature data or normalized data depending on the output format set
@@ -436,7 +476,7 @@ int MLX90642_GetImage(uint8_t slaveAddr, uint16_t *pixVal);
  * @retval <0 Error while getting the full frame data
  *
  */
-int MLX90642_GetFrameData(uint8_t slaveAddr, uint16_t *aux, uint16_t *rawpix, uint16_t *pixVal);
+int MLX90642_GetFrameData(uint8_t slaveAddr, uint16_t *aux, uint16_t *rawpix, int16_t *pixVal);
 
 /** Puts the MLX90642 device in low power consumption mode
  *

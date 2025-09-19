@@ -1,5 +1,5 @@
 /**
- * @copyright (C) 2017 Melexis N.V.
+ * @copyright (C) 2025 Melexis N.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,37 @@
  * limitations under the License.
  *
  */
-#include <MLX90642_depends.h>
-#include <MLX90642.h>
+#include "MLX90642_depends.h"
+#include "MLX90642.h"
+
+int MLX90642_Config(uint8_t slaveAddr, uint16_t writeAddress, uint16_t data)
+{
+    uint8_t wr_buf[MLX90642_I2C_CONFIG_BYTES_NUM];
+
+    wr_buf[0] = MLX90642_MS_BYTE(MLX90642_CONFIG_OPCODE);
+    wr_buf[1] = MLX90642_LS_BYTE(MLX90642_CONFIG_OPCODE);
+    wr_buf[2] = MLX90642_MS_BYTE(writeAddress);
+    wr_buf[3] = MLX90642_LS_BYTE(writeAddress);
+    wr_buf[4] = MLX90642_MS_BYTE(data);
+    wr_buf[5] = MLX90642_LS_BYTE(data);
+
+    return MLX90642_I2CWrite(slaveAddr, wr_buf, MLX90642_I2C_CONFIG_BYTES_NUM);
+
+}
+
+int MLX90642_I2CCmd(uint8_t slaveAddr, uint16_t i2c_cmd)
+{
+
+    uint8_t wr_buf[MLX90642_I2C_CMD_BYTES_NUM];
+
+    wr_buf[0] = MLX90642_MS_BYTE(MLX90642_CMD_OPCODE);
+    wr_buf[1] = MLX90642_LS_BYTE(MLX90642_CMD_OPCODE);;
+    wr_buf[2] = MLX90642_MS_BYTE(i2c_cmd);
+    wr_buf[3] = MLX90642_LS_BYTE(i2c_cmd);
+
+    return MLX90642_I2CWrite(slaveAddr, wr_buf, MLX90642_I2C_CMD_BYTES_NUM);
+
+}
 
 int MLX90642_GetID(uint8_t slaveAddr, uint16_t *mlxid)
 {
@@ -24,15 +53,15 @@ int MLX90642_GetID(uint8_t slaveAddr, uint16_t *mlxid)
 
 }
 
-int MLX90642_GetFWver(uint8_t slaveAddr, uint8_t *fwver)
+int MLX90642_GetFWver(uint8_t slaveAddr, uint8_t *major, uint8_t *minor, uint8_t *patch)
 {
 
     uint16_t data[2];
     int status = MLX90642_I2CRead(slaveAddr, MLX90642_FW_VER_ADDRESS1, MLX90642_NUMBER_OF_FWVER_WORDS, data);
 
-    fwver[0] = MLX90642_MS_BYTE(data[0]);
-    fwver[1] = MLX90642_LS_BYTE(data[1]);
-    fwver[2] = MLX90642_MS_BYTE(data[1]);
+    *major = MLX90642_MS_BYTE(data[0]);
+    *minor = MLX90642_LS_BYTE(data[1]);
+    *patch = MLX90642_MS_BYTE(data[1]);
 
     return status;
 }
@@ -445,7 +474,7 @@ int MLX90642_StartSync(uint8_t slaveAddr)
 
 }
 
-int MLX90642_MeasureNow(uint8_t slaveAddr, uint16_t *pixVal)
+int MLX90642_MeasureNow(uint8_t slaveAddr, int16_t *pixVal)
 {
 
     uint16_t ref_time;
@@ -488,14 +517,14 @@ int MLX90642_MeasureNow(uint8_t slaveAddr, uint16_t *pixVal)
 
 }
 
-int MLX90642_GetImage(uint8_t slaveAddr, uint16_t *pixVal)
+int MLX90642_GetImage(uint8_t slaveAddr, int16_t *pixVal)
 {
 
-    return MLX90642_I2CRead(slaveAddr, MLX90642_TO_DATA_ADDRESS, MLX90642_TOTAL_NUMBER_OF_PIXELS, pixVal);
+    return MLX90642_I2CRead(slaveAddr, MLX90642_TO_DATA_ADDRESS, MLX90642_TOTAL_NUMBER_OF_PIXELS, (uint16_t *) pixVal);
 
 }
 
-int MLX90642_GetFrameData(uint8_t slaveAddr, uint16_t *aux, uint16_t *rawpix, uint16_t *pixVal)
+int MLX90642_GetFrameData(uint8_t slaveAddr, uint16_t *aux, uint16_t *rawpix, int16_t *pixVal)
 {
 
     int status;
@@ -508,7 +537,10 @@ int MLX90642_GetFrameData(uint8_t slaveAddr, uint16_t *aux, uint16_t *rawpix, ui
     if(status < 0)
         return status;
 
-    status = MLX90642_I2CRead(slaveAddr, MLX90642_TO_DATA_ADDRESS, MLX90642_TOTAL_NUMBER_OF_PIXELS + 1, pixVal);
+    status = MLX90642_I2CRead(slaveAddr,
+                              MLX90642_TO_DATA_ADDRESS,
+                              MLX90642_TOTAL_NUMBER_OF_PIXELS + 1,
+                              (uint16_t *)pixVal);
 
     return status;
 
@@ -518,5 +550,15 @@ int MLX90642_GotoSleep(uint8_t slaveAddr)
 {
 
     return MLX90642_I2CCmd(slaveAddr, MLX90642_SLEEP_CMD);
+
+}
+
+int MLX90642_WakeUp(uint8_t slaveAddr)
+{
+    uint8_t wr_buf[MLX90642_I2C_WAKEUP_BYTES_NUM];
+
+    wr_buf[0] = MLX90642_WAKE_CMD;
+
+    return MLX90642_I2CWrite(slaveAddr, wr_buf, MLX90642_I2C_WAKEUP_BYTES_NUM);
 
 }
