@@ -11,16 +11,12 @@ There are 4 types of i2c communications to implement:
 1. Block read - this function is used for all data read-outs, including a signle
 word read-out. For more information please refer to the datasheet chapter regarding
 the communication protocol
-2. Configuration - this function is used for the device configurations such as 
+2. Block write - the function needs to send selectable number of bytes. 
+This function is used for the device configurations such as 
 refresh rate, measurement mode, output format, emissivity background temperature,
-i2c settings, etc. For more information please refer to the datasheet chapter regarding
+i2c settings, etc and for the device commands such as reset, force start/sync,
+goto sleep and wake-up. For more information please refer to the datasheet chapter regarding
 the user configurable options.
-3. Command - this function is used for sending commands such as reset, goto sleep,
-force start/sync. For more information please refer to the datasheet chapter regarding
-the communication protocol
-4. Wake up - this function is used to get the device out of sleep mode.
-For more information please refer to the datasheet chapter regarding
-the communication protocol
 
 The driver functions may also use a wait function. That funbction is also included
 in the MLX90642_depends.h file and needs to be implemented individually for a given MCU. 
