@@ -7,7 +7,7 @@ in `MLX90642_depends.h` file.
 Since there is one source and two header files they can be built also just as
 normal source files.
 
-There are 4 types of i2c communications to implement:
+There are 2 basic types of i2c communications to implement:
 1. Block read - this function is used for all data read-outs, including a signle
 word read-out. For more information please refer to the datasheet chapter regarding
 the communication protocol
