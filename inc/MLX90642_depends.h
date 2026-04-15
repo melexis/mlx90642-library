@@ -34,7 +34,7 @@
 int MLX90642_I2CRead(uint8_t slaveAddr, uint16_t startAddress, uint16_t nMemAddressRead, uint16_t *rData);
 
 /** MLX90642 block write I2C command
- * @note Sends multiple bytes on the I2C bus. This function is used by te Config, Command, Sleep and Wake-up functions
+ * @note Sends multiple bytes on the I2C bus. This function is used by the Config, Command, Sleep and Wake-up functions
  *
  * @param[in] slaveAddr I2C slave address of the device
  * @param[in] buffer Pointer to the buffer that contains the data to send
@@ -44,7 +44,7 @@ int MLX90642_I2CRead(uint8_t slaveAddr, uint16_t startAddress, uint16_t nMemAddr
  *
  */
 
-int MLX90642_I2CWrite(uint8_t slaveAddr, uint8_t *buffer, uint8_t bytesNum);
+int MLX90642_I2CWrite(uint8_t slaveAddr, const uint8_t *buffer, uint8_t bytesNum);
 
 /** Delay function
  *

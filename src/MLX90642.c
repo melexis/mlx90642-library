@@ -38,7 +38,7 @@ int MLX90642_I2CCmd(uint8_t slaveAddr, uint16_t i2c_cmd)
     uint8_t wr_buf[MLX90642_I2C_CMD_BYTES_NUM];
 
     wr_buf[0] = MLX90642_MS_BYTE(MLX90642_CMD_OPCODE);
-    wr_buf[1] = MLX90642_LS_BYTE(MLX90642_CMD_OPCODE);;
+    wr_buf[1] = MLX90642_LS_BYTE(MLX90642_CMD_OPCODE);
     wr_buf[2] = MLX90642_MS_BYTE(i2c_cmd);
     wr_buf[3] = MLX90642_LS_BYTE(i2c_cmd);
 
