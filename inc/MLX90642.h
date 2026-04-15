@@ -466,6 +466,7 @@ int MLX90642_GetImage(uint8_t slaveAddr, int16_t *pixVal);
 
 /** Get the full frame data - raw IR data, aux data and calculated image from the MLX90642 device
  * @note The image will contain temperature data or normalized data depending on the output format set
+ * @note The pixVal buffer is also used to store the Ta value. Thus its size must be the number of pixels + 1
  *
  * @param[in] slaveAddr I2C slave address of the device
  * @param[out] aux Pointer to where the aux data is stored
