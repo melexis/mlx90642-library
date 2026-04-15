@@ -7,20 +7,16 @@ in `MLX90642_depends.h` file.
 Since there is one source and two header files they can be built also just as
 normal source files.
 
-There are 4 types of i2c communications to implement:
-1. Block read - this function is used for all data read-outs, including a signle
+There are 2 basic types of i2c communications to implement:
+1. Block read - this function is used for all data read-outs, including a single
 word read-out. For more information please refer to the datasheet chapter regarding
 the communication protocol
-2. Configuration - this function is used for the device configurations such as 
+2. Block write - the function needs to send selectable number of bytes. 
+This function is used for the device configurations such as 
 refresh rate, measurement mode, output format, emissivity background temperature,
-i2c settings, etc. For more information please refer to the datasheet chapter regarding
+i2c settings, etc. and for the device commands such as reset, force start/sync,
+goto sleep and wake-up. For more information please refer to the datasheet chapter regarding
 the user configurable options.
-3. Command - this function is used for sending commands such as reset, goto sleep,
-force start/sync. For more information please refer to the datasheet chapter regarding
-the communication protocol
-4. Wake up - this function is used to get the device out of sleep mode.
-For more information please refer to the datasheet chapter regarding
-the communication protocol
 
 The driver functions may also use a wait function. That funbction is also included
 in the MLX90642_depends.h file and needs to be implemented individually for a given MCU. 
@@ -71,7 +67,7 @@ After the environment is set you need to enter below flow to your program.
 int main(void)
 {
     int status = 0; /**< Variable will store return values */
-    uint16_t mlxto[MLX90642_TOTAL_NUMBER_OF_PIXELS + 1]; /**< Image data in degC*50 or normalized depending on the output format congifuration */
+    int16_t mlxto[MLX90642_TOTAL_NUMBER_OF_PIXELS + 1]; /**< Image data in degC*50 or normalized depending on the output format congifuration */
     
     /* Initialize the MLX90642 device - Prepare a clean start - start or sync a new measurement and wait for the data to be available for reading */
     status = MLX90642_Init(SA_90642);
@@ -112,7 +108,7 @@ After the environment is set you need to enter one of the below flows to your pr
 int main(void)
 {
     int status = 0; /**< Variable will store return values */
-    uint16_t mlxto[MLX90642_TOTAL_NUMBER_OF_PIXELS + 1]; /**< Image data in degC*50 or normalized depending on the output format congifuration */
+    int16_t mlxto[MLX90642_TOTAL_NUMBER_OF_PIXELS + 1]; /**< Image data in degC*50 or normalized depending on the output format congifuration */
     
     /* Initialize the MLX90642 device - Prepare a clean start - start or sync a new measurement and wait for the data to be available for reading */
     status = MLX90642_Init(SA_90642);
@@ -141,7 +137,7 @@ int main(void)
 int main(void)
 {
     int status = 0; /**< Variable will store return values */
-    uint16_t mlxto[MLX90642_TOTAL_NUMBER_OF_PIXELS + 1]; /**< Image data in degC*50 or normalized depending on the output format congifuration */
+    int16_t mlxto[MLX90642_TOTAL_NUMBER_OF_PIXELS + 1]; /**< Image data in degC*50 or normalized depending on the output format congifuration */
     
     /* Initialize the MLX90642 device - Prepare a clean start - start or sync a new measurement and wait for the data to be available for reading */
     status = MLX90642_Init(SA_90642);
